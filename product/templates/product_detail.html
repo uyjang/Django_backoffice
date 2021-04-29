@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load humanize %}
+<!-- 휴머나이즈는 여러 표현(?)을 할 수 있는 기능. ex) 1200000 -> 1,200,000 원 / 사용하려면 settings.py에 휴머나이즈 앱을 활성화 -->
+{% block contents %}
+<div class='row mt-5'>
+    <div class="col-12">
+        <h1 style="text-align: center;">{{ product.name }} 상품 자세히 보기</h1>
+    </div>
+</div>
+
+<div class='row mt-5'>
+    <div class="col-12">
+        <div class="card" style="width : 100%">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"> 
+                    <form method="POST" action="/order/create/">
+                        {% csrf_token %}
+                        <!-- 자세히보기 페이지에서 주문하기기능을 만들어서 주문하기 버튼을 누르게 되면 action에 지정한 url로 이동해서 밑에 있는 폼을 부르는 작업들이 실행됨 이때 폼데이터를 실어 보내줘야 되므로 method는 POST이다.-->
+                        {% for field in form %}
+                        <div class="form-group">
+                            <!-- Order 밑에 있는 RegisterForm 에 prodcut필드는 히든인풋으로 인풋은 되지만 클라이언트에게는 숨긴 필드이다. 그래서 프로덕트가 아니면 라벨을 보여주고 프로덕트면 라벨을 숨긴다는 기능 -->
+                            {% ifnotequal field.name 'product'  %}
+                            <label for="{{ field.id_for_label}}">{{ field.label }}</label>
+                            {% endifnotequal%}
+                            <input type="{{ field.field.widget.input_type }}" class="form-control" id="{{ field.id_for_label}}" placeholder="{{ field.label }}" name="{{ field.name }}" value="{% ifequal field.name 'product' %} {{ product.id }} {% endifequal %}" />
+                            <!-- value를 넣은 이유는 클라이언트한테는 안보여도 product의 id 값이 value를 통해서 전달은 되도록 하기 위해서 -->
+                        </div>
+                        {% if field.errors %}
+                        <span style="color:red">{{ field.errors }}</span>
+                        {% endif %}
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary">주문하기</button>
+                    </form>
+                </li>
+                <li class="list-group-item">가격: {{ product.price|intcomma }} 원 </li>
+                <li class="list-group-item">등록날짜: {{ product.register_date|date:'Y-m-d H:i' }}</li>
+                <li class="list-group-item">재고: {{ product.stock }} 개</li>
+                <li class="list-group-item">{{ product.description|safe }}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <a href="/product/">목록보기</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

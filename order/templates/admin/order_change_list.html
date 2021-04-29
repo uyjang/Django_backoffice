@@ -1,0 +1,24 @@
+{% extends 'admin/change_list.html' %}
+<!-- 장고 라이브러리 안에 기본적으로 만들어져있는 change_list파일이다. -->
+{% load static %}
+<!-- 스태틱파일들도 당연히 로드를 해줘야됨 -->
+
+{% block extrahead %}
+{{ block.super }}
+<!-- super().함수()이런 것처럼 템플릿에서도 먼저 기존 거를 불러와야됨 -->
+<script>
+    function order_refund_submit(obj_id) {
+        jQuery("#changelist-form").append('<input type="hidden" name="obj_id" value="' + obj_id + '">');
+        // 환불 버튼을 클릭했을 때 버튼이 있는 행과 연관된 정보 중 order_refund_submit(obj.id)함수에 그 행의 정보에서 가져온 id값을 넣고 실행되면서 obj.id값이 #change_form을 통해 히든값으로 들어오고
+        jQuery("#changelist-form").submit();
+        // 이제 폼을 submit하면 된다.
+    }
+</script>
+{% endblock %}
+
+{% block search %}
+<!-- 서치바가 들어오는 곳에 만들겠다 -->
+<a class="btn btn-primary mb-1" href="/admin/order/order/date_view/">날짜뷰 보기</a>
+{{ block.super }}
+<!-- 블록슈퍼 꼭 실행 -->
+{% endblock %}

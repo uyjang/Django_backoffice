@@ -1,0 +1,65 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n admin_urls static admin_modify %}
+<!-- i18n은 국제화라고 해서 언어를 변경해주는 것 -->
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+        &rsaquo; <a href="{% url 'admin:app_list' app_label='order' %}">주문</a>
+        <!-- admin에 있는 app_list 중에 order라는 앱에서 가지고 와라...홈 > 주문 > 주문 에서 두번째 주문을 누르면 order앱으로 이동해야 되니깐 -->
+        &rsaquo; 주문
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="p-5">
+    <a class="btn btn-primary mb-5" href="/admin/order/order/">돌아가기</a>
+    <h3>최근 일주일 주문</h3>
+    <table class="table" p>
+        <thead>
+            <tr>
+                <th>사용자</th>
+                <th>상품</th>
+                <th>상태</th>
+                <th>일시</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in week_data %}
+            <tr>
+                <td>{{ d.fcuser }}</td>
+                <td>{{ d.product }}</td>
+                <td>{{ d.status }}</td>
+                <td>{{ d.register_date }}</td>
+                <!-- date_view에서 가져 올 때 Order모델의 objects를 가져왔으므로 order모델의 필드값을 가져옴 -->
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h3> 과거 주문 </h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>사용자</th>
+                <th>상품</th>
+                <th>상태</th>
+                <th>일시</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in data %}
+            <tr>
+                <td>{{ d.fcuser }}</td>
+                <td>{{ d.product }}</td>
+                <td>{{ d.status }}</td>
+                <td>{{ d.register_date }}</td>
+                <!-- date_view에서 가져 올 때 Order모델의 objects를 가져왔으므로 order모델의 필드값을 가져옴 -->
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

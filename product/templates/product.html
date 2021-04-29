@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load humanize %}
+<!-- 휴머나이즈는 여러 표현(?)을 할 수 있는 기능. ex) 1200000 -> 1,200,000 원 / 사용하려면 settings.py에 휴머나이즈 앱을 활성화 -->
+{% block header %}
+<script>
+    function product_detail(id){
+        $.ajax({
+            url: "/api/product/" + id,
+            // 우리가 ProductListAPI라는 클래스를 만든 것을 활용하는 것임
+            success: function( result ) {
+                // product_detail에 지정한 url을 통해서 가져온 데이터들이 result안에 들어감
+                $("#product-" + id).popover({
+                    html: true,
+                    // html 태그를 사용할 것이다라는 의미
+                    content: result.name + "<br/>" + result.price
+                }).popover('show');
+            }
+        });
+    }
+    function product_leave(id) {
+        $("#product-" + id).popover('hide');
+    }
+    $(document).ready(function() {
+    // 현재 웹페이지가 준비가 됐을 때 함수를 호출할게요
+    });
+</script>
+{%  endblock%}
+{% block contents %}
+<div class='row mt-5'>
+    <div class="col-12">
+        <h1 style="text-align: center;">상품리스트</h1>
+    </div>
+</div>
+
+<div class='row mt-5'>
+    <div class="col-12">
+        <table class="table table-light">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">번호</th>
+                    <th scope="col">상품명</th>
+                    <th scope="col">가격</th>
+                    <th scope="col">등록날짜</th>
+                </tr>
+            </thead>
+            <tbody class="text-dark">
+                    <!-- {{ object_list }} 이걸 넣으면 <QuerySet [<Product: 식기세척기>]> 이렇게 나옴 -->
+                {% for product in object_list %}
+                <tr>
+                    <th scope="row">{{ product.id }}</th>
+                    <th><a id="product-{{ product.id }}" onmouseenter="product_detail({{ product.id }})" onmouseleave="product_leave({{ product.id }})" style="cursor: pointer;" href="/product/{{ product.id }}">{{ product.name }}</a></th>
+                    <th>{{ product.price|intcomma }} 원</th>
+                    <th>{{ product.register_date|date:'Y-m-d H:i' }}</th>  
+                </tr>
+                    <!-- {{ product.name }} : {{ product.price }} -->
+                    <!-- 식기세척기 : 1200000 이렇게 나옴 -->
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
